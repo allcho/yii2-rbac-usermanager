@@ -1,0 +1,21 @@
+{
+    "name": "allcho/yii2-rbac-usermanager",
+    "description": "Control users and roles",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex B",
+            "email": "zuven@mail.ru"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "allcho\\rbac\\": ""
+        }
+    }
+}
