@@ -5,6 +5,9 @@ Control users and roles
 Installation
 ------------
 
+
+Run migration php yii migrate/to m191010_144041_init_role --migrationPath=@allcho/rbac/migrations
+
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
 Either run
