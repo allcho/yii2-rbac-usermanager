@@ -7,11 +7,12 @@
  * @link https://github.com/ElisDN/yii2-hybrid-authmanager
  */
 
-namespace allcho\rbac\hybridrbac\events;
+namespace allcho\rbac\common\extensions\hybridrbac\events;
 
 use yii\base\Event;
 
-class RemoveAllEvent extends Event
+class RenameRoleEvent extends Event
 {
-
+    public $oldRoleName;
+    public $newRoleName;
 }

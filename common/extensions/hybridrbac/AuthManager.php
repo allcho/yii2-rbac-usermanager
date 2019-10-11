@@ -7,12 +7,12 @@
  * @link https://github.com/ElisDN/yii2-hybrid-authmanager
  */
 
-namespace allcho\rbac\hybridrbac;
+namespace allcho\rbac\common\extensions\hybridrbac;
 
-use allcho\rbac\hybridrbac\events\RemoveAllAssignmentsEvent;
-use allcho\rbac\hybridrbac\events\RemoveAllEvent;
-use allcho\rbac\hybridrbac\events\RemoveRoleEvent;
-use allcho\rbac\hybridrbac\events\RenameRoleEvent;
+use allcho\rbac\common\extensions\hybridrbac\events\RemoveAllAssignmentsEvent;
+use allcho\rbac\common\extensions\hybridrbac\events\RemoveAllEvent;
+use allcho\rbac\common\extensions\hybridrbac\events\RemoveRoleEvent;
+use allcho\rbac\common\extensions\hybridrbac\events\RenameRoleEvent;
 use yii\base\InvalidParamException;
 use yii\base\InvalidValueException;
 use yii\rbac\Assignment;

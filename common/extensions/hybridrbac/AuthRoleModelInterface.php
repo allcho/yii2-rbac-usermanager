@@ -7,7 +7,7 @@
  * @link https://github.com/ElisDN/yii2-hybrid-authmanager
  */
 
-namespace allcho\rbac\hybridrbac;
+namespace allcho\rbac\common\extensions\hybridrbac;
 
 interface AuthRoleModelInterface
 {
