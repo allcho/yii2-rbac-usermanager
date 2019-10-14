@@ -30,8 +30,8 @@ Set component in your config:
 'components' => [
     ...
     'authManager' => [
-        'class' => 'allcho\rbac\common\extensions\hybridrbac',
-        //'modelClass' => 'common\models\User',
+        'class' => 'allcho\rbac\common\extensions\hybridrbac\AuthManager',
+        'modelClass' => 'common\models\User',
     ],
 ],
 ```
@@ -41,7 +41,11 @@ Set controllerMap  in your console config:
 'controllerMap' => [
         'initrbac' => [
             'class' => 'allcho\rbac\console\controllers\InitRbacController',
-            //'modelClass' => 'common\models\User',
+            'modelClass' => 'common\models\User',
+            'path' => 'console\rbac',
+            'itemFile' => '@console/rbac/items.php',
+            'assignmentFile' => '@console/rbac/assignments.php',
+            'ruleFile' => '@console/rbac/rules.php',
             
         ]
   
@@ -65,6 +69,38 @@ And set controllerMap frontend config (options)
 ```
 
 
+Add to backend component in your config 
+```
+        'view' => [
+         'theme' => [
+             'pathMap' => [
+                '@app/views/usermanager' => '@vendor/allcho/yii2-rbac-usermanager/backend/views/user-manager'
+                ],
+            ],
+        ],
+```
+OR copy and move to your backend views this /allcho/yii2-rbac-usermanager/backend/views/user-manager folder
+
+
+Add to frontend  component in your config  (options)
+```
+        'view' => [
+         'theme' => [
+             'pathMap' => [
+                '@app/views/profile' => '@vendor/allcho/yii2-rbac-usermanager/frontend/views/profile'
+                ],
+            ],
+        ],
+```
+OR copy and move to your frontend views this /allcho/yii2-rbac-usermanager/frontend/views/profile folder
+
+
+Add rules in your model User 
+
+```
+['role', 'string', 'max' => 64]
+```
+
 Run migration 
 
 ```
@@ -74,7 +110,7 @@ php yii migrate/to m191010_144041_init_role --migrationPath=@allcho/rbac/migrati
 Run InitRbac create superadmin role and signup superadmin account (superadmin can be only one)
 
 ```
-php yii initrbac/iit
+php yii initrbac/init
 ```
 
 ```

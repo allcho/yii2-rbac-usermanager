@@ -10,6 +10,8 @@ use yii\filters\AccessControl;
 use allcho\rbac\common\models\UserSearch;
 use common\models\User;
 use allcho\rbac\common\models\PasswordChangeForm;
+use yii\helpers\ArrayHelper;
+use yii\data\ArrayDataProvider;
 
 /**
  * UserManagerController implements the CRUD actions for User model.
@@ -45,6 +47,25 @@ class UserManagerController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+    
+    
+    public function actionRole()
+    {
+        $roles = Yii::$app->authManager->roles;
+//        var_dump(Yii::$app->authManager->getPermissions());
+//        die;
+         $model = new ArrayDataProvider([
+        'allModels' => $roles,
+        'pagination' => [
+               'pageSize' => 5,
+         ]
+         
+        ]);
+        return $this->render('role', [
+            'model' => $model,
+        ]);
+        
     }
 
     /**

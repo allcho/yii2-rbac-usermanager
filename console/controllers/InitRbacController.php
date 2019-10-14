@@ -7,17 +7,36 @@ use Yii;
 class InitRbacController extends \yii\console\Controller {
 
     public $modelClass = 'app\models\User';
+    public $path = "app\commands\rbac";
     
     public function actionInit()
     {
+        
+        \yii\helpers\FileHelper::createDirectory($this->path, $mode = 0777, $recursive = true);
         $auth = Yii::$app->getAuthManager();
         $auth->removeAll();
+        
+        $adminPanel = $auth->createPermission('adminPanel');
+        $adminPanel->description = 'AdminPanel';
+        $auth->add($adminPanel);
 
         $superadmin = $auth->createRole('superadmin');
         $superadmin->description = 'SuperAdmin';
         $auth->add($superadmin);
+        
+        $moderator = $auth->createRole('moderator');
+        $moderator->description = 'Moderator';
+        $auth->add($moderator);
  
-        $this->stdout('Role is created!' . PHP_EOL);
+        $user = $auth->createRole('user');
+        $user->description = 'User';
+        $auth->add($user);
+        
+        $auth->addChild($superadmin, $moderator);
+        $auth->addChild($moderator, $user);
+        $auth->addChild($moderator, $adminPanel);
+        
+        $this->stdout('Roles is created!' . PHP_EOL);
     }
     
     
