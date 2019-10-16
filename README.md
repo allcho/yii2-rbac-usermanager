@@ -32,6 +32,9 @@ Set component in your config:
     'authManager' => [
         'class' => 'allcho\rbac\common\extensions\hybridrbac\AuthManager',
         'modelClass' => 'common\models\User',
+        'itemFile' => '@console/rbac/items.php',
+        'assignmentFile' => '@console/rbac/assignments.php',
+        'ruleFile' => '@console/rbac/rules.php',
     ],
 ],
 ```
@@ -43,9 +46,7 @@ Set controllerMap  in your console config:
             'class' => 'allcho\rbac\console\controllers\InitRbacController',
             'modelClass' => 'common\models\User',
             'path' => 'console\rbac',
-            'itemFile' => '@console/rbac/items.php',
-            'assignmentFile' => '@console/rbac/assignments.php',
-            'ruleFile' => '@console/rbac/rules.php',
+         
             
         ]
   

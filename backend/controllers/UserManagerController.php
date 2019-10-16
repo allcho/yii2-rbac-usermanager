@@ -24,6 +24,16 @@ class UserManagerController extends Controller
     public function behaviors()
     {
         return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'role', 'update', 'create'],
+                        'allow' => true,
+                        'roles' => ['superadmin'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -53,10 +63,10 @@ class UserManagerController extends Controller
     public function actionRole()
     {
         $roles = Yii::$app->authManager->roles;
-//        var_dump(Yii::$app->authManager->getPermissions());
-//        die;
+        $permissions = Yii::$app->authManager->getPermissions();
+
          $model = new ArrayDataProvider([
-        'allModels' => $roles,
+        'allModels' => array_merge($roles, $permissions),
         'pagination' => [
                'pageSize' => 5,
          ]

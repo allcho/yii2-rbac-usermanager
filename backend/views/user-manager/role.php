@@ -28,8 +28,24 @@ $this->params['breadcrumbs'][] = $this->title;
     'columns' => [
         'name',
         'description',
-        'type',
-        // ...
+        [
+        'attribute' => 'type', 
+        'label' => 'Тип',
+       'format' => 'raw',
+
+        'value' => function ($model, $key, $index, $column) {
+            $status = $model->type === 1;
+            return \yii\helpers\Html::tag(
+                'span',
+                $status ? 'Роль' : 'Разрешение',
+                [
+                    'class' => 'label label-' . ($status ? 'success' : 'danger'),
+
+                ]
+            );
+            },
+
+        ],
     ],
 ]) ?>
 
