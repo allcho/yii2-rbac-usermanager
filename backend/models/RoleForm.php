@@ -14,6 +14,7 @@ class RoleForm extends Model
     public $role;
     public $type;
     public $desc;
+    public $parent;
     public $child;
     
     
@@ -23,7 +24,7 @@ class RoleForm extends Model
             [['role', 'type', 'desc'], 'required'], 
             [['role', 'desc'], 'string', 'max' => 64],
             ['type', 'integer', 'max' => 2],
-            ['child', 'safe'],
+            [['child', 'parent'], 'safe'],
         ];
     }
     
@@ -35,6 +36,7 @@ class RoleForm extends Model
             'role' => 'Name',
             'type' => 'Role or Permission',
             'desc' => 'Descriptions',
+            'parent' => 'Parent',
             'child' => 'Add Child'
         ];
     }
