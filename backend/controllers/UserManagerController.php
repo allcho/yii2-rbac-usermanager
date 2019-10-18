@@ -2,16 +2,15 @@
 namespace allcho\rbac\backend\controllers;
 
 use Yii;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use allcho\rbac\common\models\UserSearch;
 use common\models\User;
-use allcho\rbac\common\models\PasswordChangeForm;
-use yii\helpers\ArrayHelper;
 use yii\data\ArrayDataProvider;
+use allcho\rbac\common\models\SignupForm;
+use allcho\rbac\common\models\ProfileForm;
+use allcho\rbac\backend\models\RoleForm;
 
 /**
  * UserManagerController implements the CRUD actions for User model.
@@ -28,7 +27,7 @@ class UserManagerController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'role', 'update', 'create'],
+                      //  'actions' => ['index', 'role', 'update', 'create'],
                         'allow' => true,
                         'roles' => ['superadmin'],
                     ],
@@ -59,36 +58,26 @@ class UserManagerController extends Controller
         ]);
     }
     
-    
+    /**
+     * Lists all Role models.
+     * @return mixed
+     */
     public function actionRole()
     {
         $roles = Yii::$app->authManager->roles;
         $permissions = Yii::$app->authManager->getPermissions();
 
-         $model = new ArrayDataProvider([
+        $dataProvider = new ArrayDataProvider([
         'allModels' => array_merge($roles, $permissions),
         'pagination' => [
-               'pageSize' => 5,
+               'pageSize' => 25,
          ]
          
         ]);
         return $this->render('role', [
-            'model' => $model,
+            'dataProvider' => $dataProvider,
         ]);
         
-    }
-
-    /**
-     * Displays a single User model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
     }
 
     /**
@@ -98,14 +87,41 @@ class UserManagerController extends Controller
      */
     public function actionCreate()
     {
-        $model = new User();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = new SignupForm();
+        $roles = Yii::$app->getAuthManager()->getRoles();
+        
+        if ($model->load(Yii::$app->request->post())) {
+            $model->signup($model->role);
+            Yii::$app->session->setFlash('success', 'Registration new User Done.');
+            return $this->redirect('index');
         }
 
         return $this->render('create', [
             'model' => $model,
+            'roles' => $roles,
+        ]);
+    }
+    
+    /**
+     * Creates a new Role model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionRoleCreate()
+    {
+        $auth = Yii::$app->getAuthManager();
+        $model = new RoleForm();
+       // $roles = Yii::$app->getAuthManager()->getRoles();
+        
+//        if ($model->load(Yii::$app->request->post())) {
+//            $model->signup($model->role);
+//            Yii::$app->session->setFlash('success', 'Registration new User Done.');
+//            return $this->redirect('index');
+//        }
+
+        return $this->render('create_role', [
+            'model' => $model,
+         //   'roles' => $roles,
         ]);
     }
 
@@ -119,17 +135,30 @@ class UserManagerController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $password = new PasswordChangeForm($model);
-
-        if ($model->load(Yii::$app->request->post()) && $password->load(Yii::$app->request->post())) {
-            $password->newPassword($model);
-            $model->save();
-            return $this->redirect('index');
+        $roles = Yii::$app->getAuthManager()->getRoles();
+        $profile = new ProfileForm($model);
+        $model->scenario = ProfileForm::SCENARIO_DEFAULT;
+        $role_user = $model->role;
+        
+        if ($profile->load(Yii::$app->request->post())) {
+             if($role_user == 'superadmin' && $model->id !== Yii::$app->user->identity->id){
+                Yii::$app->session->setFlash('success', "You cannot updated a superadmin this can do only superadmin byself");
+                return $this->redirect('index');
+             }elseif ($profile->role == 'superadmin' && Yii::$app->user->identity->role !== 'superadmin'){
+                Yii::$app->session->setFlash('success', "You cannot assign a superadmin role to this user becuse you are not superadmin");
+                return $this->redirect('index');
+             }else{
+                $profile->updateUser($profile->password, $profile->username, $profile->email, $profile->role);
+                Yii::$app->session->setFlash('success', "User was updated");
+                return $this->redirect('index');
+             }
+           
         }
 
         return $this->render('update', [
             'model' => $model,
-            'password' => $password,
+            'profile' => $profile,
+            'roles' => $roles,
         ]);
     }
 
@@ -143,15 +172,13 @@ class UserManagerController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        if($model->getAuthRoleNames !== 'Администратор'){
-            $auth = Yii::$app->authManager;
-            $auth->revokeAll($id);
+        if($model->role !== 'superadmin'){
             $model->delete();
-            Yii::$app->session->setFlash('success', "Пользователь удален");
+            Yii::$app->session->setFlash('success', "User was delete");
             return $this->redirect(['index']);
         }
          
-       Yii::$app->session->setFlash('success', "Нельзя удалить админа");
+       Yii::$app->session->setFlash('success', "You cannot delete a superadmin");
        return $this->redirect(['index']);
         
     }
@@ -161,21 +188,21 @@ class UserManagerController extends Controller
         $model = $this->findModel($id);
         $model->status = '10';
         $model->update();
-        Yii::$app->session->setFlash('success', "Пользователь разблокирован");
+        Yii::$app->session->setFlash('success', "User was unlock");
         return $this->redirect(Yii::$app->request->referrer);
 
     }
     public function actionLock($id)
     {
         $model = $this->findModel($id);
-        if($model->userRole !== 'Администратор'){
+        if($model->role !== 'superadmin'){
              $model->status = '0';
              $model->update();
-             Yii::$app->session->setFlash('success', "Пользователь заблокирован");
+             Yii::$app->session->setFlash('success', "User was block");
              return $this->redirect(Yii::$app->request->referrer);
         }
 
-       Yii::$app->session->setFlash('success', "Нельзя заблокировать админа");
+       Yii::$app->session->setFlash('success', "You cannot block a superadmin");
        return $this->redirect(['index']);
 
     }
@@ -189,6 +216,7 @@ class UserManagerController extends Controller
      */
     protected function findModel($id)
     {
+
         if (($model = User::findOne($id)) !== null) {
             return $model;
         }

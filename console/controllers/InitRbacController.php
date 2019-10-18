@@ -11,8 +11,10 @@ class InitRbacController extends \yii\console\Controller {
     
     public function actionInit()
     {
-        
-        \yii\helpers\FileHelper::createDirectory($this->path, $mode = 0777, $recursive = true);
+        if(!file_exists(Yii::getAlias($this->path))){
+            \yii\helpers\FileHelper::createDirectory(Yii::getAlias($this->path), $mode = 0777, $recursive = true);
+        }
+
         $auth = Yii::$app->getAuthManager();
         $auth->removeAll();
         

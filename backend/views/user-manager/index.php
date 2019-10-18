@@ -7,15 +7,13 @@ use yii\grid\GridView;
 /* @var $searchModel common\models\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Пользователи';
+$this->title = 'Users';
 $this->params['breadcrumbs'][] = $this->title;
-//var_dump($dataProvider->role);
-//die;
 ?>
 <div class="user-index">
 
     <p>
-        <?= Html::a('Добавить пользователя', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create user', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
 
@@ -27,32 +25,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'summary' => false,
         'columns' => [
             'id',
-            [
-                'attribute' => 'username',
-                'label' => 'Логин',
-            ],
+            'username',
  
             [
                 'attribute' => 'status',
-                'label' => 'Статус',
+                'label' => 'Status',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
                     $status = $model->status;
-                    if($status === \common\models\User::STATUS_INACTIVE){
-                        $label_text = 'Неактивный';
+                    if ($status === \common\models\User::STATUS_INACTIVE) {
+                        $label_text = 'Not active';
                         $label_class = 'warning';
-                    }elseif($status === \common\models\User::STATUS_ACTIVE){
-                        $label_text = 'Активный';
+                    } elseif ($status === \common\models\User::STATUS_ACTIVE) {
+                        $label_text = 'Active';
                         $label_class = 'success';
-                    }else{
-                        $label_text = 'Заблокирован';
-                        $label_class = 'danger;';
+                    } else {
+                        $label_text = 'Block';
+                        $label_class = 'danger';
                     }
                     return \yii\helpers\Html::tag(
                                     'span',
-
                                     $label_text,
-             
                                     [
                                         'class' => 'label label-' . $label_class,
                                     ]
@@ -60,58 +53,55 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'email:email',
-            [
-                'attribute' => 'role',
-                'label' => 'Роль',
-                'value' => 'role',
-            ],
+            'role',
+                        
             ['attribute' => 'created_at',
                 'format' => ['datetime', 'php:Y-m-d h:i:s'],
                 'headerOptions' => ['width' => '200'],
-                'label' => 'Дата создания',
+                'label' => 'Created date',
             ],
             ['attribute' => 'updated_at',
                 'format' => ['datetime', 'php:Y-m-d h:i:s'],
                 'headerOptions' => ['width' => '200'],
-                'label' => 'Дата редактирования',
+                'label' => 'Updated date',
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{update} {lock} {delete}',
-                'headerOptions' => ['width' => '300'],
+                'header' => 'Actions',
+                'headerOptions' => ['width' => '80'],
+                'template' => '{update}{lock}{delete}',
                 'buttons' => [
-                    'update' => function ($url, $model, $key) {
-                        return Html::a('Редактировать', $url) . ' / ';
-                    },
                     'lock' => function ($url, $model, $key) {
                         if ($model->status !== 0) {
-                            return Html::a('Заблокировать', $url, [
-                                        'style' => 'color:#f39c12',
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                                        'style' => 'padding:0 10px',
+                                        'title' => 'lock',
                                         'data' => [
-                                            'confirm' => 'Вы уверены что хотите заблокировать пользователя ' . $model->username . '?',
+                                            'confirm' => 'Do you want block ' . $model->username . '?',
                                             'method' => 'post',
                                         ],
-                                    ]) . ' / ';
+                            ]);
                         } else {
-                            return Html::a('Разблокировать', Yii::$app->UrlManager->createUrl(['/user/unlock', 'id' => $model->id]), [
-                                        'style' => 'color:#00c0ef',
+                            return Html::a('<span class="glyphicon glyphicon-eye-close"></span>', Yii::$app->UrlManager->createUrl(['/usermanager/unlock', 'id' => $model->id]), [
+                                        'style' => 'padding:0 10px; color:red;',
+                                        'title' => 'unlock',
                                         'data' => [
-                                            'confirm' => 'Вы уверены что хотите разблокировать пользователя ' . $model->username . '?',
+                                            'confirm' => 'Do you want unlock  ' . $model->username . '?',
                                             'method' => 'post',
                                         ],
-                                    ]) . ' / ';
+                                    ]);
                         }
                     },
-                    'delete' => function ($url, $model, $key) {
-                        return Html::a('Удалить', $url, [
-                                    'style' => 'color:red',
-                                    'data' => [
-                                        'confirm' => 'Вы уверены что хотите удалить пользователя ' . $model->username . '?',
-                                        'method' => 'post',
-                                    ],
-                        ]);
+                    'delete' => function ($url, $model, $key) {                   
+                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                        'title' => 'delete',
+                                        'data' => [
+                                            'confirm' => 'Do you want delete ' . $model->username . '?',
+                                            'method' => 'post',
+                                        ],
+                            ]);
                     },
-                ],
+                ]
             ],
         ],
     ]);
