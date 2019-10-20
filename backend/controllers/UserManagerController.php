@@ -109,19 +109,24 @@ class UserManagerController extends Controller
      */
     public function actionRoleCreate()
     {
-        $auth = Yii::$app->getAuthManager();
         $model = new RoleForm();
-       // $roles = Yii::$app->getAuthManager()->getRoles();
-        
-//        if ($model->load(Yii::$app->request->post())) {
-//            $model->signup($model->role);
-//            Yii::$app->session->setFlash('success', 'Registration new User Done.');
-//            return $this->redirect('index');
-//        }
+        $array_roles = Yii::$app->getAuthManager()->getRoles();
+ 
+        $roles = [];
+        foreach ($array_roles as $key => $value){
+
+                 $roles[] =   Yii::$app->getAuthManager()->getChildren($key);
+        }
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model->createRole($model->role);
+            Yii::$app->session->setFlash('success', 'Registration new Role Done.');
+            return $this->redirect('role');
+        }
 
         return $this->render('create_role', [
             'model' => $model,
-         //   'roles' => $roles,
+            'roles' => $roles,
         ]);
     }
 

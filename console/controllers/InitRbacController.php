@@ -11,7 +11,8 @@ class InitRbacController extends \yii\console\Controller {
     
     public function actionInit()
     {
-        if(!file_exists(Yii::getAlias($this->path))){
+      
+        if(!file_exists(Yii::getAlias($this->path))){            
             \yii\helpers\FileHelper::createDirectory(Yii::getAlias($this->path), $mode = 0777, $recursive = true);
         }
 

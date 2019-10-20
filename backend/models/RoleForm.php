@@ -2,6 +2,7 @@
 
 namespace allcho\rbac\backend\models;
 
+use Yii;
 use yii\base\Model;
 
  
@@ -41,6 +42,33 @@ class RoleForm extends Model
         ];
     }
  
+    public function createRole()
+    {
+        if (!$this->validate()){
+    var_dump($this->errors);
+    die;
+}
+        if ($this->validate()) {
+            $auth = Yii::$app->getAuthManager();
+            if($this->type == 1){
+                $role = $auth->createRole($this->role);
+                $role->description = $this->desc;
+                $auth->add($role);
+            }elseif($this->type == 2){
+                $permission = $auth->createPermission($this->role);
+                $permission->description = $this->desc;
+                $auth->add($permission);
+            }
+            if($this->parent){
+                $auth->addChild($this->role, $this->role2);
+            }elseif($this->child){
+                $auth->addChild($this->role2, $this->role);
+            };
+            return true;
+        } else {
+            return false;
+        }
+    }
     
 
 }

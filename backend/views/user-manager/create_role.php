@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($model, 'role')->textInput(['maxlength' => true]) ?>
             <?= $form->field($model, 'type')->dropDownList(['1' => 'Role', '2' => 'Permission']); ?>
             <?= $form->field($model, 'desc')->textInput(['maxlength' => true]); ?>
-            <?= $form->field($model, 'child')->textInput(['maxlength' => true]); ?>
+             <?= $form->field($model, 'parent')->dropDownList(yii\helpers\ArrayHelper::map($roles, 'name', 'children')); ?>
        </div>
     </div>
     <div class="form-group">

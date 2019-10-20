@@ -95,10 +95,6 @@ class ProfileForm extends Model
     
     public function updateUser()
     {
-if (!$this->validate()){
-    var_dump($this->errors);
-    die;
-}
         if ($this->validate()) {
             $user = $this->_user;
             $user->username = $this->username;
