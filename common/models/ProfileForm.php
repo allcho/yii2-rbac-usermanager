@@ -56,7 +56,7 @@ class ProfileForm extends Model
 
             ['username', 'match', 'pattern' => '#^[\w_-]+$#i'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'ERROR_USERNAME_EXISTS','filter' => ['<>', 'id', $this->_user->id]],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'string', 'min' => 3, 'max' => 255],
  
             ['email', 'required'],
             ['email', 'email'],

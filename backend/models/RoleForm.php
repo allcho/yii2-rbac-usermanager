@@ -45,9 +45,9 @@ class RoleForm extends Model
     public function createRole()
     {
         if (!$this->validate()){
-    var_dump($this->errors);
-    die;
-}
+            var_dump($this->errors);
+            die;
+        }
         if ($this->validate()) {
             $auth = Yii::$app->getAuthManager();
             if($this->type == 1){

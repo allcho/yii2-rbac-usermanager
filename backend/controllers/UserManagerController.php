@@ -65,10 +65,9 @@ class UserManagerController extends Controller
     public function actionRole()
     {
         $roles = Yii::$app->authManager->roles;
-        $permissions = Yii::$app->authManager->getPermissions();
 
         $dataProvider = new ArrayDataProvider([
-        'allModels' => array_merge($roles, $permissions),
+        'allModels' => $roles,
         'pagination' => [
                'pageSize' => 25,
          ]
@@ -78,6 +77,26 @@ class UserManagerController extends Controller
             'dataProvider' => $dataProvider,
         ]);
         
+    }
+
+    
+        /**
+     * Lists all Permission models.
+     * @return mixed
+     */
+    public function actionPermission() {
+        
+        $permissions = Yii::$app->authManager->getPermissions();
+
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $permissions,
+            'pagination' => [
+                'pageSize' => 25,
+            ]
+        ]);
+        return $this->render('permission', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
@@ -114,8 +133,7 @@ class UserManagerController extends Controller
  
         $roles = [];
         foreach ($array_roles as $key => $value){
-
-                 $roles[] =   Yii::$app->getAuthManager()->getChildren($key);
+            $roles[] =   Yii::$app->getAuthManager()->getChildren($key);
         }
 
         if ($model->load(Yii::$app->request->post())) {
@@ -146,11 +164,11 @@ class UserManagerController extends Controller
         $role_user = $model->role;
         
         if ($profile->load(Yii::$app->request->post())) {
-             if($role_user == 'superadmin' && $model->id !== Yii::$app->user->identity->id){
+             if($role_user === 'superadmin' && $model->id !== Yii::$app->user->identity->id){
                 Yii::$app->session->setFlash('success', "You cannot updated a superadmin this can do only superadmin byself");
                 return $this->redirect('index');
-             }elseif ($profile->role == 'superadmin' && Yii::$app->user->identity->role !== 'superadmin'){
-                Yii::$app->session->setFlash('success', "You cannot assign a superadmin role to this user becuse you are not superadmin");
+             }elseif ($profile->role === 'superadmin' && Yii::$app->user->identity->role !== 'superadmin'){
+                Yii::$app->session->setFlash('success', "You cannot assign a superadmin role to this user because you are not superadmin");
                 return $this->redirect('index');
              }else{
                 $profile->updateUser($profile->password, $profile->username, $profile->email, $profile->role);

@@ -7,13 +7,13 @@ use yii\grid\GridView;
 /* @var $searchModel common\models\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Roles';
+$this->title = 'Permissions';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-role">
 
     <p>
-        <?= Html::a('Create role', ['role-create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create permission', ['role-create'], ['class' => 'btn btn-success']) ?>
     </p>
 
 
@@ -31,12 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Тип',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
-                    $status = $model->type === 1;
                     return \yii\helpers\Html::tag(
                                     'span',
-                                    'Роль',
+                                    'Разрешение',
                                     [
-                                        'class' => 'label label-success' ,
+                                        'class' => 'label label-success',
                                     ]
                     );
                 },

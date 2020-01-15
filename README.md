@@ -16,7 +16,7 @@ php composer.phar require --prefer-dist allcho/yii2-rbac-usermanager "*"
 or add
 
 ```
-"allcho/yii2-rbac-usermanager": "*"
+"allcho/yii2-rbac-usermanager": "dev-master"
 ```
 
 to the require section of your `composer.json` file.
